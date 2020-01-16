@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ontology.mapper.ProductMapper">
+  <resultMap id="BaseResultMap" type="com.ontology.entity.Product">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="invoke_id" jdbcType="VARCHAR" property="invokeId" />
+    <result column="data_id" jdbcType="VARCHAR" property="dataId" />
+    <result column="auth_id" jdbcType="VARCHAR" property="authId" />
+    <result column="ontid" jdbcType="VARCHAR" property="ontid" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="price" jdbcType="VARCHAR" property="price" />
+    <result column="amount" jdbcType="INTEGER" property="amount" />
+    <result column="tag" jdbcType="VARCHAR" property="tag" />
+    <result column="judger" jdbcType="VARCHAR" property="judger" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+  <select id="queryProduct" resultMap="BaseResultMap">
+    select * from tbl_product
+    <where>
+      <if test="tag !='' and tag !=null">
+        tag like concat('%',#{tag},'%')
+      </if>
+      and state = 3
+    </where>
+    order by create_time desc
+    limit #{startPage},#{pageSize}
+  </select>
+
+  <select id="queryProductCount" resultType="int">
+    select count(1) from tbl_product
+    <where>
+      <if test="tag !='' and tag !=null">
+        tag like concat('%',#{tag},'%')
+      </if>
+      and state = 3
+    </where>
+  </select>
+
+  <select id="selectByDataId" parameterType="String" resultMap="BaseResultMap">
+    select * from tbl_product
+    where data_id = #{dataId}
+  </select>
+
+  <select id="selectSelfProduct" parameterType="String" resultMap="BaseResultMap">
+    select * from tbl_product
+    where ontid = #{ontid}
+    and (state = 1 or state = 3)
+    order by create_time desc
+  </select>
+
+  <select id="selectUpload" resultMap="BaseResultMap">
+    select * from tbl_product
+    where state = 0 and data_id is null
+    order by create_time asc
+  </select>
+
+  <select id="selectAuth" resultMap="BaseResultMap">
+    select * from tbl_product
+    where state = 2 and auth_id is null
+    order by create_time asc
+  </select>
+
+</mapper>

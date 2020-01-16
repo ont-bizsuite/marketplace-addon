@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ontology.mapper.OrderMapper">
+  <resultMap id="BaseResultMap" type="com.ontology.entity.Order">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="invoke_id" jdbcType="VARCHAR" property="invokeId" />
+    <result column="tx_hash" jdbcType="VARCHAR" property="txHash" />
+    <result column="order_id" jdbcType="VARCHAR" property="orderId" />
+    <result column="token_id" jdbcType="VARCHAR" property="tokenId" />
+    <result column="jwt" jdbcType="VARCHAR" property="jwt" />
+    <result column="provider" jdbcType="VARCHAR" property="provider" />
+    <result column="demander" jdbcType="VARCHAR" property="demander" />
+    <result column="price" jdbcType="VARCHAR" property="price" />
+    <result column="judger" jdbcType="VARCHAR" property="judger" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+  <select id="selectByTxHash" parameterType="String" resultMap="BaseResultMap">
+    select * from tbl_order
+    where tx_hash = #{txHash}
+  </select>
+
+  <select id="querySelfOrder" parameterType="String" resultMap="BaseResultMap">
+    select * from tbl_order
+    where ${ownerType} = #{ontid}
+    and (state =2 or state = 4)
+    order by create_time desc
+  </select>
+
+  <select id="selectPurchase" resultMap="BaseResultMap">
+    select * from tbl_order
+    where state = 1 and order_id is null
+    order by create_time asc
+  </select>
+
+  <select id="selectConfirm" resultMap="BaseResultMap">
+    select * from tbl_order
+    where state = 3
+    order by create_time asc
+  </select>
+
+</mapper>
